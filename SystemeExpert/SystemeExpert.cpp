@@ -12,7 +12,7 @@
 
 bool initHypotheses(Hypotheses& p_Hypotheses, const std::string& p_sFileName = "Exemples/hypotheses_ex")
 {
-    std::ifstream l_fHypotheses("./Resources/"+ p_sFileName);
+    std::ifstream l_fHypotheses("../Resources/"+ p_sFileName);
 
     if (!l_fHypotheses)
     {
@@ -38,7 +38,7 @@ bool initHypotheses(Hypotheses& p_Hypotheses, const std::string& p_sFileName = "
 
 bool initSysteme(Systeme& p_Systeme, const std::string& p_sFileName = "Exemples/systeme_ex")
 {
-    std::ifstream l_fSysteme("./Resources/" + p_sFileName);
+    std::ifstream l_fSysteme("../Resources/" + p_sFileName);
 
     if (!l_fSysteme)
     {
