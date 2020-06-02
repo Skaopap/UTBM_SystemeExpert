@@ -1,0 +1,3 @@
+!reservoirVide + pharesFonctionnent + !moteurDemarre = problemeBougie
+!moteurDemarre + !pharesFonctionnent = problemeBatterie
+!moteurDemarre + pharesFonctionnent = problemeStarter
