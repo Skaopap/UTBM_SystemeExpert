@@ -10,4 +10,4 @@ Le programme devra déterminer toutes les conclusions possible avec les faits à
 
 ## Regles
 
-![Regle pour ecrire dans les fichiers](./Resources/regles.txt)
+[Regle pour ecrire dans les fichiers](./Resources/regles.txt)
