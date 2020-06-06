@@ -8,6 +8,13 @@ Réaliser un programme permettant de prendre en compte une base de faits et un s
 
 Le programme devra déterminer toutes les conclusions possible avec les faits à disposition. 
 
-## Regles
+## Regles 
 
 [Regle pour ecrire dans les fichiers](./Resources/regles.txt)
+
+## Utilisation
+
+Copier le repo.
+Lancer le .exe dans Release_Rendu.
+Ou lancer le .sln pour l'ouvrir dans visual studio.
+Enjoy.
