@@ -37,6 +37,7 @@ void Systeme::print(bool asResult)
 	for (auto it : m_vEquations)
 	{
 		std::cout << "\t";
+		// Custom print
 		if (asResult && !it.isResolved())
 		{
 			std::cout << "(Hypotheses Manquantes : ";

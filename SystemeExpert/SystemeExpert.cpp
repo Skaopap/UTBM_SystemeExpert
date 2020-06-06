@@ -8,6 +8,31 @@
 #include "Hypotheses.h"
 #include "Systeme.h"
 
+bool checkWordIntegrity(const std::string& p_word)
+{
+    if (p_word.find('+') != std::string::npos)
+    {
+        std::cout << "[ERROR](SystemeExpert::checkWordIntegrity) : le caractere '+' n'est pas correctement place ("+ p_word +"), voir regles.txt" << std::endl;
+        return false;
+    }
+
+    if (p_word.find('=') != std::string::npos)
+    {
+        std::cout << "[ERROR](SystemeExpert::checkWordIntegrity) : le caractere '=' n'est pas correctement place (" + p_word + "), voir regles.txt" << std::endl;
+        return false;
+    }
+
+    if (p_word.find(' ') != std::string::npos)
+    {
+        std::cout << "[ERROR](SystemeExpert::checkWordIntegrity) : le caractere ' ' (espace) n'est pas correctement place (>" + p_word + "<), voir regles.txt" << std::endl;
+        return false;
+    }
+
+
+
+    return true;
+}
+
 /**
  * Lit le fichier spécifié dans le répertoires Resources
  * Afin de remplir l'objet p_Hypotheses des données fournies
@@ -25,7 +50,10 @@ bool initHypotheses(Hypotheses& p_Hypotheses, const std::string& p_sFileName = "
     std::string l_sTemp;
     while (std::getline(l_fHypotheses, l_sTemp))
     {
-        std::cout << l_sTemp << std::endl;
+        // Check Word integrity
+        if (!checkWordIntegrity(l_sTemp))
+            return false;
+
         // Read the negation
         bool l_Value = (l_sTemp[0] == '!') ? false : true;
         int l_iSubstr = l_Value ? 0 : 1;
@@ -70,10 +98,18 @@ bool initSysteme(Systeme& p_Systeme, const std::string& p_sFileName = "Exemples/
         {
             if (word != "=")
             {
+                // Check Word integrity
+                if (!checkWordIntegrity(word))
+                    return false;
+
                 if (l_bIsConclusion)
                 {
+                    // Check negation
+                    bool l_Value = (word[0] == '!') ? false : true;
+                    int l_iSubstr = l_Value ? 0 : 1;
+
                     // Add conclusion
-                    l_Equation.addConclusion(word);
+                    l_Equation.addConclusion(word.substr(l_iSubstr), l_Value);
                     l_vEquations.push_back(l_Equation);
 
                     // Reset
@@ -106,6 +142,7 @@ bool initSysteme(Systeme& p_Systeme, const std::string& p_sFileName = "Exemples/
     return true;
 }
 
+
 int main()
 {
     // Init variables
@@ -128,8 +165,15 @@ int main()
         {
             std::cout << " Choix 1 : Realisation du programmes avec les fichiers d'exemples. \n";
             // Lecture des fichiers Equation / Hypothèses d'exemple
-            initHypotheses(l_Hypotheses);
-            initSysteme(l_Systeme);
+            ;
+            if (!initHypotheses(l_Hypotheses) || !initSysteme(l_Systeme))
+            {
+                std::cout << " /!\\ Veuillez modifier les fichiers et recommencer.  /!\\ \n";
+                l_Hypotheses.clear();
+                l_Systeme.clear();
+                continue;
+            }
+
         }
         else if (l_sChoice == "2")
         {
@@ -137,8 +181,13 @@ int main()
             std::getline(std::cin, l_sChoice);
 
             // Lecture des fichiers Equation / Hypotheses
-            initHypotheses(l_Hypotheses, "hypotheses");
-            initSysteme(l_Systeme, "systeme");
+            if (!initHypotheses(l_Hypotheses, "hypotheses") || !initSysteme(l_Systeme, "systeme"))
+            {
+                std::cout << " /!\\ Veuillez modifier les fichiers et recommencer.  /!\\ \n";
+                l_Hypotheses.clear();
+                l_Systeme.clear();
+                continue;
+            }
         }
         else {
             // Fin du programme
@@ -146,7 +195,7 @@ int main()
         }
 
         // Afficher etat initial
-        std::cout << "========== Etat Initial ==========" << std::endl;
+        std::cout << "==================== Etat Initial ====================" << std::endl;
         l_Hypotheses.print();
         l_Systeme.print();
 
@@ -154,7 +203,7 @@ int main()
         l_Systeme.ResolveSystem(l_Hypotheses);
 
         // Affichage résultat
-        std::cout << "========== Etat Final ==========" << std::endl;
+        std::cout << "==================== Etat Final ====================" << std::endl;
         l_Hypotheses.print();
         l_Systeme.print(true);
 

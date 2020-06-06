@@ -19,14 +19,14 @@ public:
 	void addHypotheseValue(const std::string& p_HypotheseName, const bool& p_HypotheseValue);
 
 	// Add the conclusion
-	inline void addConclusion(const std::string& p_conclusion) { m_sConclusion = std::make_pair(p_conclusion, false); }
+	inline void addConclusion(const std::string& p_conclusion, const bool& p_operator) { m_sConclusion = std::make_pair(std::make_pair(p_conclusion, p_operator),false); }
 
 	// To check if the equation is resolved
 	inline bool isResolved() { return m_bIsResolved; }
 
 	// Set and get for conclusion
 	void setConclusion(bool p_Result);
-	std::pair<std::string, bool> const getConclusion() const { return m_sConclusion; }
+	std::pair<std::string, bool> const getConclusion() const { return std::make_pair(m_sConclusion.first.first , ((m_sConclusion.first.second) ? m_sConclusion.second : !m_sConclusion.second)); }
 
 	// Clear Equation Data
 	void clear();
@@ -48,8 +48,8 @@ protected :
 	// Store Hypothese value in a map < name , value >
 	std::map<std::string, bool> m_HypotheseValue;
 
-	// Store conclusion < name , value> 
-	std::pair<std::string, bool> m_sConclusion;
+	// Store conclusion << name , operator> , value >
+	std::pair<std::pair<std::string, bool> , bool> m_sConclusion;
 
 	// Flag Resolved
 	bool m_bIsResolved;

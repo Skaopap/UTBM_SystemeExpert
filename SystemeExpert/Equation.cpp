@@ -3,8 +3,8 @@
 void Equation::print() 
 {
 	for (auto it : m_vHypotheseName)
-		std::cout << ((it.second == false) ? "!" : " ") << it.first << ((it == m_vHypotheseName.back()) ? "" : " + ");
-	std::cout << " = " << m_sConclusion.first << std::endl;
+		std::cout << ((it.second == false) ? "!" : "") << it.first << ((it == m_vHypotheseName.back()) ? "" : " + ");
+	std::cout << " = " << ((m_sConclusion.first.second == false) ? "!" : "") << m_sConclusion.first.first << std::endl;
 }
 
 void Equation::addHypotheseValue(const std::string& p_HypotheseName, const bool& p_HypotheseValue)
@@ -60,5 +60,5 @@ void Equation::setConclusion(bool p_Result)
 
 void Equation::clear() 
 {
-	m_vHypotheseName.clear(); m_sConclusion.first = "";
+	m_vHypotheseName.clear(); m_sConclusion.first.first = "";
 }
