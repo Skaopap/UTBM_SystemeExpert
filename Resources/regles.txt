@@ -1,0 +1,25 @@
+Fichier hypotheses :
+
+	Un seul mot par ligne.
+	Le mot ne doit pas contenir le caractère '+' ou '=' et la ligne ne doit pas contenir d'espace.
+	Le mot peut commencer par '!' pour préciser que l'hypothese est "false" 
+
+	Exemples impossible : "bon+jour" , " bonjour" , "bonjour " , "bonjou=r"
+	Exemples possible : "bonjour" , "BoNJouR", "!BONJOUR" , "Bonj!o!ur" , "!bon!jour"
+
+
+Fichier Systeme :
+	
+	Une equation par ligne.
+	Toutes les chaines de caratères doivent être séparées par un espace.
+	Une chaine ne doit pas contenir le caractère '+' ou '='.
+	Les chaines de la première partie (avant le '=') doivent être séparée par un '+', représentant des 'ET' logique.
+	La première et la seconde partie sont séparée par un '='.
+	Il ne doit y avoir qu'une seule chaine après le '='.
+
+	Exemple impossible : "bonjour+ aurevoir = arbre" , "bon=jour + aurevoir = ar+bre" , "bonjour + !aurevoir =arbre", "bonjour + aurevoir = arbre + vent"
+	Exemple possible : "bonjour + aurevoir = arbre" , "!bonjour + !aurevoir = arbre" , "bonjour + aurevoir = !arbre"
+
+
+
+IMPORTANT : Les chaines de caractères doivent impérativement correspondre entre les deux fichiers, le système est sensible à la casse.
