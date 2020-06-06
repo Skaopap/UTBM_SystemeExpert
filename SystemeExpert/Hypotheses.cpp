@@ -1,6 +1,6 @@
 #include "Hypotheses.h"
 
-void Hypotheses::print()
+void Hypotheses::print() const
 {
 	std::cout << "Liste D'hypothese : " << std::endl << "{ " << std::endl;
 	for (auto it : m_vHypotheses)

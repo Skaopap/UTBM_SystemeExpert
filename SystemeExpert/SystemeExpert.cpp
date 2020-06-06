@@ -1,15 +1,17 @@
-// SystemeExpert.cpp : Ce fichier contient la fonction 'main'. L'exécution du programme commence et se termine à cet endroit.
-//
-
 #include <iostream>
 #include <fstream>
 #include <istream>
 #include <string>
 
+// Header
 #include "Equation.h"
 #include "Hypotheses.h"
 #include "Systeme.h"
 
+/**
+ * Lit le fichier spécifié dans le répertoires Resources
+ * Afin de remplir l'objet p_Hypotheses des données fournies
+ */
 bool initHypotheses(Hypotheses& p_Hypotheses, const std::string& p_sFileName = "Exemples/hypotheses_ex")
 {
     std::ifstream l_fHypotheses("../Resources/"+ p_sFileName);
@@ -36,6 +38,10 @@ bool initHypotheses(Hypotheses& p_Hypotheses, const std::string& p_sFileName = "
     return true;
 }
 
+/**
+ * Lit le fichier spécifié dans le répertoires Resources
+ * Afin de remplir l'objet p_Systeme avec les equations fournies
+ */
 bool initSysteme(Systeme& p_Systeme, const std::string& p_sFileName = "Exemples/systeme_ex")
 {
     std::ifstream l_fSysteme("../Resources/" + p_sFileName);
@@ -49,6 +55,7 @@ bool initSysteme(Systeme& p_Systeme, const std::string& p_sFileName = "Exemples/
     std::vector<std::string> l_vWords;
 
     // Store each word in l_vWords
+    // Les mots sont reconnu en étant séparé par un espace
     std::copy(std::istream_iterator<std::string>(l_fSysteme),
         std::istream_iterator<std::string>(), back_inserter(l_vWords));
 
@@ -86,6 +93,7 @@ bool initSysteme(Systeme& p_Systeme, const std::string& p_sFileName = "Exemples/
             }
             else
             {
+                // Next word is the conclusion
                 l_bIsConclusion = true;
             }
         }
@@ -94,7 +102,7 @@ bool initSysteme(Systeme& p_Systeme, const std::string& p_sFileName = "Exemples/
     // Create System
     p_Systeme.setEquations(l_vEquations);
 
-    l_fSysteme.close();
+    l_fSysteme.close(); // close read streal
     return true;
 }
 
@@ -105,41 +113,54 @@ int main()
     Systeme l_Systeme;
     std::string l_sChoice;
 
-    do {
-        std::cout << "Systeme Expert, Bienvenue !\n";
-        std::cout << "Choix : " << "\n " << "1 - Lancer le systeme avec les fichers d'exemples \n 2 - Lancer le systeme avec un couple systeme/hypotheses personnalise \n";
-        std::cout << " Votre choix : ";
-        std::getline(std::cin, l_sChoice);
-    } while (l_sChoice != "1" && l_sChoice != "2");
-
-    if (l_sChoice == "1")
+    // Here we go
+    while (true)
     {
-        // Lecture des fichiers Equation / Hypothèses d'exemple
-        initHypotheses(l_Hypotheses);
-        initSysteme(l_Systeme);
+        // Menu
+        do {
+            std::cout << "\nSysteme Expert, Bienvenue !\n";
+            std::cout << "Choix : " << "\n " << "1 - Lancer le systeme avec les fichers d'exemples \n 2 - Lancer le systeme avec un couple systeme/hypotheses personnalise \n 3 - Exit \n";
+            std::cout << " Votre choix : ";
+            std::getline(std::cin, l_sChoice);
+        } while (l_sChoice != "1" && l_sChoice != "2" && l_sChoice != "3");
+
+        if (l_sChoice == "1")
+        {
+            std::cout << " Choix 1 : Realisation du programmes avec les fichiers d'exemples. \n";
+            // Lecture des fichiers Equation / Hypothèses d'exemple
+            initHypotheses(l_Hypotheses);
+            initSysteme(l_Systeme);
+        }
+        else if (l_sChoice == "2")
+        {
+            std::cout << " Choix 2 : \n Veuillez remplir les fichiers nommes hypotheses et systeme dans le repertoires Resources selon les regles decrites dans regles.txt \n Appuyez sur entree une fois fini.";
+            std::getline(std::cin, l_sChoice);
+
+            // Lecture des fichiers Equation / Hypotheses
+            initHypotheses(l_Hypotheses, "hypotheses");
+            initSysteme(l_Systeme, "systeme");
+        }
+        else {
+            // Fin du programme
+            return 1;
+        }
+
+        // Afficher etat initial
+        std::cout << "========== Etat Initial ==========" << std::endl;
+        l_Hypotheses.print();
+        l_Systeme.print();
+
+        // Résoudre et affichage résultat
+        l_Systeme.ResolveSystem(l_Hypotheses);
+
+        // Affichage résultat
+        std::cout << "========== Etat Final ==========" << std::endl;
+        l_Hypotheses.print();
+        l_Systeme.print(true);
+
+        // Reset data
+        l_Hypotheses.clear();
+        l_Systeme.clear();
     }
-    else if (l_sChoice == "2")
-    {
-        std::cout << "Veuillez remplir les fichiers nommes hypotheses et systeme dans le repertoires Resources selon les regles decrites dans regles.txt \n Appuyez sur entree une fois fini.";
-        std::getline(std::cin, l_sChoice);
-
-        initHypotheses(l_Hypotheses,"hypotheses");
-        initSysteme(l_Systeme,"systeme");
-    }
-
-    // Afficher etat initial
-    std::cout << "========== Etat Initial ==========" << std::endl;
-    l_Hypotheses.print();
-    l_Systeme.print();
-
-    // Possibilité de laisser avec les fichiers exemples
-
-    // Résoudre et affichage résultat
-    l_Systeme.ResolveSystem(l_Hypotheses);
-
-    // Affichage résultat
-    std::cout << "========== Etat Final ==========" << std::endl;
-    l_Hypotheses.print();
-    l_Systeme.print(true);
 }
 
