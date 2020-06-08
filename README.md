@@ -18,7 +18,7 @@ Le programme devra déterminer toutes les conclusions possible avec les faits à
 
 ## Utilisation
 
-Copier le repo.  
+Cloner ou Télecharger le repo.  
 Lancer le .exe dans Release_Rendu.  
 Ou lancer le .sln pour l'ouvrir dans visual studio.  
 Enjoy.  
