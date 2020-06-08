@@ -14,7 +14,7 @@ Le programme devra déterminer toutes les conclusions possible avec les faits à
 
 ## Architecture
 
-![Diagramme de classe](./Resources/Infos/classDiagram.png)
+![Diagramme de classe](./Resources/Infos/classDiagramm.png)
 
 ## Utilisation
 
