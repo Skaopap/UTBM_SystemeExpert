@@ -1,3 +1,4 @@
 !moteurDemarre + !pharesFonctionnent = problemeBatterie
 !moteurDemarre + pharesFonctionnent = problemeStarter
 problemeStarter + pharesFonctionnent + !moteurDemarre = problemeBougie
+problemeBatterie = BatterieMorte

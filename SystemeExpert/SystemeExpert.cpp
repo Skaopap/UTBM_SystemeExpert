@@ -8,17 +8,27 @@
 #include "Hypotheses.h"
 #include "Systeme.h"
 
+
+/**
+ * Verifie qu'un mot respecte les règles d'écriture
+ */
 bool checkWordIntegrity(const std::string& p_word)
 {
     if (p_word.find('+') != std::string::npos)
     {
-        std::cout << "[ERROR](SystemeExpert::checkWordIntegrity) : le caractere '+' n'est pas correctement place ("+ p_word +"), voir regles.txt" << std::endl;
+        std::cout << "[ERROR](SystemeExpert::checkWordIntegrity) : le caractere '+' n'est pas correctement place (>"+ p_word +"<), voir regles.txt" << std::endl;
+        return false;
+    }
+
+    if (p_word.substr(1).find('!') != std::string::npos)
+    {
+        std::cout << "[ERROR](SystemeExpert::checkWordIntegrity) : le caractere '!' n'est pas correctement place (>" + p_word + "<), voir regles.txt" << std::endl;
         return false;
     }
 
     if (p_word.find('=') != std::string::npos)
     {
-        std::cout << "[ERROR](SystemeExpert::checkWordIntegrity) : le caractere '=' n'est pas correctement place (" + p_word + "), voir regles.txt" << std::endl;
+        std::cout << "[ERROR](SystemeExpert::checkWordIntegrity) : le caractere '=' n'est pas correctement place (>" + p_word + "<), voir regles.txt" << std::endl;
         return false;
     }
 
@@ -27,8 +37,6 @@ bool checkWordIntegrity(const std::string& p_word)
         std::cout << "[ERROR](SystemeExpert::checkWordIntegrity) : le caractere ' ' (espace) n'est pas correctement place (>" + p_word + "<), voir regles.txt" << std::endl;
         return false;
     }
-
-
 
     return true;
 }
@@ -87,53 +95,112 @@ bool initSysteme(Systeme& p_Systeme, const std::string& p_sFileName = "Exemples/
     std::copy(std::istream_iterator<std::string>(l_fSysteme),
         std::istream_iterator<std::string>(), back_inserter(l_vWords));
 
+    std::vector<std::vector<std::string>> l_vEquationsRows;
+    std::vector<std::string> l_vEquationWords;
+    int l_bIsEnd = 0;
+
+    // In one vector, one equation
+    for (auto word : l_vWords)
+    {
+        if (l_bIsEnd == 2)
+        {
+            l_vEquationsRows.push_back(l_vEquationWords);
+            l_vEquationWords.clear();
+            l_bIsEnd = 0;
+        }
+
+        l_vEquationWords.push_back(word);
+
+
+        if (word == "=" || l_bIsEnd == 1)
+            l_bIsEnd++;
+    }
+
+    // Add the last one
+    l_vEquationsRows.push_back(l_vEquationWords);
+
     std::vector<Equation> l_vEquations;
     Equation l_Equation;
     bool l_bIsConclusion = false;
 
+    bool flagWordExpected;
+
     // Create Equations Vector
-    for (auto word : l_vWords)
+    for (auto equationRow : l_vEquationsRows)
     {
-        if (word != "+")
+        // First word should not be + or =
+        flagWordExpected = true;
+
+        for (auto word : equationRow)
         {
-            if (word != "=")
+            if (word != "+")
             {
-                // Check Word integrity
-                if (!checkWordIntegrity(word))
+                if (word != "=")
+                {
+                    // check
+                    if (!flagWordExpected)
+                    {
+                        std::cout << "[ERROR](initSysteme) : Dans le fichier systeme : Caractere '+' ou '=' attendu, ou trop de mot apres un caractere '=' \n";
+                        return false;
+                    }
+
+                    // Check Word integrity
+                    if (!checkWordIntegrity(word))
+                        return false;
+
+                    if (l_bIsConclusion)
+                    {
+                        // Check negation
+                        bool l_Value = (word[0] == '!') ? false : true;
+                        int l_iSubstr = l_Value ? 0 : 1;
+
+                        // Add conclusion
+                        l_Equation.addConclusion(word.substr(l_iSubstr), l_Value);
+                        l_vEquations.push_back(l_Equation);
+
+                        // Reset
+                        l_bIsConclusion = false;
+                        l_Equation.clear();
+                    }
+                    else
+                    {
+                        // Check negation
+                        bool l_Value = (word[0] == '!') ? false : true;
+                        int l_iSubstr = l_Value ? 0 : 1;
+
+                        // Add hypotheses
+                        l_Equation.addHypotheseOperation(std::make_pair(word.substr(l_iSubstr), l_Value));
+
+                        // Check next word
+                        flagWordExpected = false;
+                    }
+
+                }
+                else if (!flagWordExpected)
+                {
+                    // Next word is the conclusion
+                    l_bIsConclusion = true;
+                    flagWordExpected = true;
+                }
+                else 
+                {
+                    std::cout << "[ERROR](initSysteme) : Un caractere '=' est mal place dans le fichier systeme \n";
                     return false;
-
-                if (l_bIsConclusion)
-                {
-                    // Check negation
-                    bool l_Value = (word[0] == '!') ? false : true;
-                    int l_iSubstr = l_Value ? 0 : 1;
-
-                    // Add conclusion
-                    l_Equation.addConclusion(word.substr(l_iSubstr), l_Value);
-                    l_vEquations.push_back(l_Equation);
-
-                    // Reset
-                    l_bIsConclusion = false;
-                    l_Equation.clear();
                 }
-                else
-                {
-                    // Check negation
-                    bool l_Value = (word[0] == '!') ? false : true;
-                    int l_iSubstr = l_Value ? 0 : 1;
-
-                    // Add hypotheses
-                    l_Equation.addHypotheseOperation(std::make_pair(word.substr(l_iSubstr), l_Value));
-                }
-                
             }
-            else
+            else if (!flagWordExpected)
             {
-                // Next word is the conclusion
-                l_bIsConclusion = true;
+                flagWordExpected = true;
             }
+            else 
+            {
+                std::cout << "[ERROR](initSysteme) : Un caractere '+' est mal place dans le fichier systeme \n";
+                return false;
+            }
+
         }
     }
+    
 
     // Create System
     p_Systeme.setEquations(l_vEquations);
@@ -168,7 +235,7 @@ int main()
             ;
             if (!initHypotheses(l_Hypotheses) || !initSysteme(l_Systeme))
             {
-                std::cout << " /!\\ Veuillez modifier les fichiers et recommencer.  /!\\ \n";
+                std::cout << "\n /!\\ Veuillez modifier les fichiers et recommencer.  /!\\ \n";
                 l_Hypotheses.clear();
                 l_Systeme.clear();
                 continue;
@@ -183,7 +250,7 @@ int main()
             // Lecture des fichiers Equation / Hypotheses
             if (!initHypotheses(l_Hypotheses, "hypotheses") || !initSysteme(l_Systeme, "systeme"))
             {
-                std::cout << " /!\\ Veuillez modifier les fichiers et recommencer.  /!\\ \n";
+                std::cout << "\n /!\\ Veuillez modifier les fichiers et recommencer.  /!\\ \n";
                 l_Hypotheses.clear();
                 l_Systeme.clear();
                 continue;

@@ -2,10 +2,11 @@ Fichier hypotheses :
 
 	Un seul mot par ligne.
 	Le mot ne doit pas contenir le caractère '+' ou '=' et la ligne ne doit pas contenir d'espace.
+	Le mot ne doit pas contenir le caractèr '!' ailleurs qu'en début de mot.
 	Le mot peut commencer par '!' pour préciser que l'hypothese est "false" 
 
 	Exemples impossible : "bon+jour" , " bonjour" , "bonjour " , "bonjou=r"
-	Exemples possible : "bonjour" , "BoNJouR", "!BONJOUR" , "Bonj!o!ur" , "!bon!jour"
+	Exemples possible : "bonjour" , "!bonjour" , "BoNJouR", "!BOàç_NJç(-OU45R"
 
 
 Fichier Systeme :
